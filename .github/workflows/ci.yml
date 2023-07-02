@@ -1,9 +1,11 @@
 name: CI
 
 on:
+  label:
+    types: [created, edited]
   push:
     branches:
-      - develop
+      - main
 
 concurrency:
   group: ${{ github.ref }}
