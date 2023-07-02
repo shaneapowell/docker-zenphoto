@@ -1,6 +1,9 @@
 # docker-zenphoto
 A dedicated docker image of the ZenPhoto CMS.
 
+## Registry
+https://github.com/shaneapowell/docker-zenphoto/pkgs/container/docker-zenphoto
+
 # Features
 - GD Support
 - PHP 8.0.0
@@ -13,22 +16,8 @@ A dedicated docker image of the ZenPhoto CMS.
 - Existing MariaDB running
 
 # Docker Setup
-## CLI
-```
-$ docker volume create zp_cache --opt o=uid=33
-$ docker volume create zp_cache_html  --opt o=uid=33
-$ docker run -it ghcr.io/shaneapowell/docker-zenphoto \
-        -p 80:80 \
-        -v zp_cache:/var/www/html/cache \
-        -v zp_cache_html:/var/www/html/cache_html \
-        -v
-```
-- Create needed local volumes
-  - `zp-data`
-  - `cache`
-  - `cache_html`
 
-## Docker Compose - Quick Start
+## docker-compose - Quick Start
 Keeps all dynamic files in `/home/zenphoto/data`.  A series of sub-folders will be added automatically to this location.  You can then simply manually add any image files to the `./albums` folder that will be created.
 ```
 version: "3.9"
@@ -45,7 +34,7 @@ services:
 
 ```
 
-## Docker Compose - Separate Volumes (preferred)
+## docker-compose - Separate Volumes (preferred)
 You can keep the data, albums, and cache folders separate if wanted.  In this example, the `albums` is stored on a NAS using NFS to mount.  The cache folders are kept in an automatically created docker volume.
 ```
 version: "3.9"
@@ -78,15 +67,23 @@ volumes:
 
 ```
 
-# Container Update
+## CLI
+```
+$ docker volume create zp_cache --opt o=uid=33
+$ docker run -it ghcr.io/shaneapowell/docker-zenphoto \
+        -p 80:80 \
+        -v /home/zenphoto/data:/var/www/data
+```
+
+
+# Update to next ZenPhoto version
 As soon as the next version of zenphoto is released, I'll populate this section.
 
 
 # Zenphto Setup
 - `Navigate to http://<host>:80`
 - Enter your DB credentials at the bottom.
-  - Database Creation Success
-- Click `GO` button to complete setup. This can take some time if you have lots of photos. Be patient, it's running.
+- Click `GO` button to complete setup. This can take some time (up to a minute),  Be patient, it's running.
 - Step through the final zenphoto setup pages.
 - Disable Maintenance mode.
   - ZenPhoto Admin pages.
@@ -127,11 +124,11 @@ Query OK, 0 rows affected (0.076 sec)
   - GID:33 (www-data))
 
 - How is the `/var/www/data` volume structured?
-  - `./zp-data`: Where the main configuration is stored.
+  - `./zp-data`: Where the main configuration data is stored.
   - `./albums`: The location of all your image files.
-  - `./cache` Temporary cache files for permormance. Can be deleted anytime. Auto-Created by zen-photo.
+  - `./cache` Temporary cache files for permormance. Can be deleted anytime. Auto-Created by zen-photo.  If you don't care about ZenPhoto having to re-create this every time you re-create or re-start your container, you can even leave this cache volume unmapped.  I don't recommend that though.
 
 ## Tips
-- the `zp-data` mounted volume must be RW by the `www-data` (UID:33) user within the container.   The easiest solution is to set this folder to to `chmod 777`. This is not ideal though as it opens up the permissions to far.
+- the `zp-data` mounted volume must be `RW` by the `www-data` (UID:33) user within the container.   The easiest solution is to set this folder to to `chmod 777`. This is not ideal though as it opens up the permissions to far.  I simply set the owner of the mount point to `UID:33`
 - Your mounted `albums` folder at `/var/www/html/albums` must be RW by the `www-data` user.  Easiest thing to do is set the directory permissions to `a+rwx`.
 
