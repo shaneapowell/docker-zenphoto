@@ -28,7 +28,8 @@ $ docker run -it ghcr.io/shaneapowell/docker-zenphoto \
   - `cache`
   - `cache_html`
 
-## Docker Compose
+## Docker Compose - Quick Start
+Keeps all dynamic files in `/home/zenphoto/data`.  A series of sub-folders will be added automatically to this location.  You can then simply manually add any image files to the `./albums` folder that will be created.
 ```
 version: "3.9"
 services:
@@ -37,19 +38,49 @@ services:
     container_name: zenphoto
     image: ghcr.io/shaneapowell/zenphoto:1.6.0
     restart: unless-stopped
-    user: 33:100
     ports:
       - 80:80
     volumes:
-      - /home/myuser/zenphoto/data:/var/www/html/zp-data
-      - /home/myuser/zenphoto/albums:/var/www/html/albums
-      - /home/myuser/zenphoto/cache:/var/www/html/cache
-      - /home/myuser/zenphoto/cache_html:/var/www/html/cache_html
+      - /home/zenphoto/data:/var/www/data
 
 ```
 
-# Docker Update
-TBD
+## Docker Compose - Separate Volumes (preferred)
+You can keep the data, albums, and cache folders separate if wanted.  In this example, the `albums` is stored on a NAS using NFS to share.  The cache folders are kept in an automatically created docker volume.
+```
+version: "3.9"
+services:
+
+  zenphoto:
+    container_name: zenphoto
+    image: ghcr.io/shaneapowell/zenphoto:1.6.0
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - /home/zenphoto/zp-data:/var/www/data/zp-data
+      - zenphoto-albums/var/www/data/albums
+      - zenphoto-cache:/var/www/html/cache
+
+
+volumes:
+
+  # Auto-Created volume for cache data
+  zenphoto-cache:
+
+  # NFS mounted volume for photos
+  zenphoto-albums:
+    driver_opts:
+      type: "nfs"
+      o: "addr=192.168.2.5,nolock,soft,rw"
+      device: ":/mnt/user/media/photos"
+
+
+```
+
+# Container Update
+As soon as the next version of zenphoto is released, I'll populate this section.
+
 
 # Zenphto Setup
 - `Navigate to http://<host>:80`
@@ -92,8 +123,13 @@ Query OK, 0 rows affected (0.076 sec)
 # Troubleshooting
 ## FAQ
 - What is the UID:GID of the user within the container?
-  - username: www-data (UID33)
-  - group:
+  - UID:33 (www-data)
+  - GID:33 (www-data))
+
+- How is the `/var/www/data` volume structured?
+  - `./zp-data`: Where the main configuration is stored.
+  - `./albums`: The location of all your image files.
+  - `./cache` Temporary cache files for permormance. Can be deleted anytime. Auto-Created by zen-photo.
 
 ## Tips
 - the `zp-data` mounted volume must be RW by the `www-data` (UID:33) user within the container.   The easiest solution is to set this folder to to `chmod 777`. This is not ideal though as it opens up the permissions to far.

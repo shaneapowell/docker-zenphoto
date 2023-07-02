@@ -31,14 +31,12 @@ RUN wget -O /tmp/zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1
 RUN mkdir -p /var/www/data && \
     mv /var/www/html/zp-data /var/www/data && \
     mv /var/www/html/albums /var/www/data && \
-    mv /var/www/html/uploaded /var/www/data && \
-    mkdir /var/www/data/cache && \
-    mkdir /var/www/data/cache_html && \
+    mkdir /var/www/data/cache/cache && \
+    mkdir /var/www/data/cache/cache_html && \
     ln -s /var/www/data/zp-data /var/www/html/zp-data && \
-    ln -s /var/www/data/cache /var/www/html/cache && \
-    ln -s /var/www/data/cache_html /var/www/html/cache_html && \
-    ln -s /var/www/data/uploaded /var/www/html/uploaded && \
-    chown -R www-data:www-data /var/www 
+    ln -s /var/www/data/cache/cache /var/www/html/cache && \
+    ln -s /var/www/data/cache/cache_html /var/www/html/cache_html && \
+    chown -R www-data:www-data /var/www
 
 COPY htaccess .htaccess
 COPY run.sh /run.sh
