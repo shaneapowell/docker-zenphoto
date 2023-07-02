@@ -17,11 +17,12 @@ RUN apt update -y && \
 	apt install libmagickwand-dev --no-install-recommends -y && \
 	pecl install imagick && docker-php-ext-enable imagick  && \
     apt-get clean && apt-get autoclean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /var/www/html/* && \
     a2enmod rewrite && \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg=/usr/local/lib && \
-    docker-php-ext-install -j$(nproc) mysqli gd  gettext tidy zip exif bz2 intl
+    docker-php-ext-install -j$(nproc) mysqli gd  gettext tidy zip exif bz2 intl && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/www/html/* && \
+    rm -rf /var/cache/apk/*
 
 RUN wget -O /tmp/zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1.6.tar.gz && \
     /bin/tar xvf /tmp/zenphoto.tar.gz -C /var/www/html --strip-components=1 && \
@@ -29,6 +30,7 @@ RUN wget -O /tmp/zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1
 
 COPY htaccess .htaccess
 COPY run.sh /run.sh
+RUN chown a+x /run/sh
 
 LABEL org.opencontainers.image.version="1.6.0"
 LABEL org.opencontainers.image.description="ZenPhoto 1.6.0"
