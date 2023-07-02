@@ -32,9 +32,8 @@ RUN wget -O /tmp/zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1
     rm /tmp/zenphoto.tar.gz
 
 COPY htaccess .htaccess
-RUN chown -R www-data ./ && \
-    chmod -R 0700 zp-data && \
-    mkdir zp-data/charset_tést
+RUN mkdir zp-data/charset_tést && \
+    chown -R www-data ./
 
 LABEL org.opencontainers.image.version="1.6.0"
 LABEL org.opencontainers.image.description="ZenPhoto 1.6.0"
