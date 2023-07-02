@@ -46,7 +46,7 @@ services:
 ```
 
 ## Docker Compose - Separate Volumes (preferred)
-You can keep the data, albums, and cache folders separate if wanted.  In this example, the `albums` is stored on a NAS using NFS to share.  The cache folders are kept in an automatically created docker volume.
+You can keep the data, albums, and cache folders separate if wanted.  In this example, the `albums` is stored on a NAS using NFS to mount.  The cache folders are kept in an automatically created docker volume.
 ```
 version: "3.9"
 services:
@@ -60,7 +60,7 @@ services:
     volumes:
       - /home/zenphoto/zp-data:/var/www/data/zp-data
       - zenphoto-albums/var/www/data/albums
-      - zenphoto-cache:/var/www/html/cache
+      - zenphoto-cache:/var/www/data/cache
 
 
 volumes:
@@ -135,5 +135,3 @@ Query OK, 0 rows affected (0.076 sec)
 - the `zp-data` mounted volume must be RW by the `www-data` (UID:33) user within the container.   The easiest solution is to set this folder to to `chmod 777`. This is not ideal though as it opens up the permissions to far.
 - Your mounted `albums` folder at `/var/www/html/albums` must be RW by the `www-data` user.  Easiest thing to do is set the directory permissions to `a+rwx`.
 
-## I keep getting an error when I access the URL?
-- This is usually a database connection error.  You can skip the setting of the various DB ENV vars in your docker compose. This should cause zen-photo to bring up the "setup" page.  You can manually try and enter your DB credentials here and see if they work as expected. If you manage to get a connection, you can `shell` into your container and view the contents of the generated
