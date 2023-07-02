@@ -3,6 +3,11 @@ A dedicated docker image of the ZenPhoto CMS.
 
 # Features
 - GD Support
+- PHP 8.0.0
+- Apache2
+- (future) 2 image versions.
+  - One with a built in MariaDB.
+  - One requring and existing MariaDB.
 
 # Requirements
 - Existing MariaDB running
@@ -24,6 +29,24 @@ $ docker run -it ghcr.io/shaneapowell/docker-zenphoto \
   - `cache_html`
 
 ## Docker Compose
+```
+version: "3.9"
+services:
+
+  zenphoto:
+    container_name: zenphoto
+    image: ghcr.io/shaneapowell/zenphoto:1.6.0
+    restart: unless-stopped
+    user: 33:100
+    ports:
+      - 80:80
+    volumes:
+      - /home/myuser/zenphoto/data:/var/www/html/zp-data
+      - /home/myuser/zenphoto/albums:/var/www/html/albums
+      - /home/myuser/zenphoto/cache:/var/www/html/cache
+      - /home/myuser/zenphoto/cache_html:/var/www/html/cache_html
+
+```
 
 # Docker Update
 TBD
@@ -33,9 +56,18 @@ TBD
 - Enter your DB credentials at the bottom.
   - Database Creation Success
 - Click `GO` button to complete setup. This can take some time if you have lots of photos. Be patient, it's running.
-- Edit your new `zenphoto.cfg.php` on your mapped volume.
-  - Comment out the line near the bottom to enable your zenphoto instance.
-  - `#$conf['site_upgrade_state'] = "closed";`
+- Step through the final zenphoto setup pages.
+- Disable Maintenance mode.
+  - ZenPhoto Admin pages.
+  - navigate to `Overview`.
+  - click the `maintentance mode` link near the middle.
+  - click the `open the site` radio button
+  - click `Apply`
+- Enable MOD_REWRIET
+  - ZenPHoto Admin Pages.
+  - navigate to `Options` tab.
+  - Enable the `mod rewrite` checkbox
+  - click `Apply`
 
 
 # Create a MariaDB database
@@ -58,8 +90,13 @@ Query OK, 0 rows affected (0.076 sec)
 ```
 
 # Troubleshooting
+## FAQ
+- What is the UID:GID of the user within the container?
+  - username: www-data (UID33)
+  - group:
 
 ## Tips
+- the `zp-data` mounted volume must be RW by the `www-data` (UID:33) user within the container.   The easiest solution is to set this folder to to `chmod 777`. This is not ideal though as it opens up the permissions to far.
 - Your mounted `albums` folder at `/var/www/html/albums` must be RW by the `www-data` user.  Easiest thing to do is set the directory permissions to `a+rwx`.
 
 ## I keep getting an error when I access the URL?
