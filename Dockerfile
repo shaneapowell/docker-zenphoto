@@ -32,7 +32,6 @@ RUN wget -O /tmp/zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1
     rm /tmp/zenphoto.tar.gz
 
 COPY htaccess .htaccess
-COPY zenphoto.cfg.php zp-data/zenphoto.cfg.php
 RUN chown -R www-data ./ && \
     chmod -R 0600 zp-data && \
     mkdir zp-data/charset_tést
