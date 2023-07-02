@@ -28,9 +28,19 @@ RUN wget -O /tmp/zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1
     /bin/tar xvf /tmp/zenphoto.tar.gz -C /var/www/html --strip-components=1 && \
     rm /tmp/zenphoto.tar.gz
 
+RUN mkdir -p /var/www/data && \
+    mv /var/www/html/zp-data /var/www/data && \
+    mv /var/www/html/albums /var/www/data && \
+    mkdir /var/www/data/cache && \
+    mkdir /var/www/data/cache_html && \
+    ln -s /var/www/data/zp-data /var/www/html/zp-data && \
+    ln -s /var/www/data/cache /var/www/html/cache && \
+    ln -s /var/www/data/cache_html /var/www/html/cache_html && \
+    chown -R www-data:www-data /var/www 
+
 COPY htaccess .htaccess
 COPY run.sh /run.sh
-RUN chown a+x /run/sh
+RUN chmod a+x /run.sh
 
 LABEL org.opencontainers.image.version="1.6.0"
 LABEL org.opencontainers.image.description="ZenPhoto 1.6.0"
