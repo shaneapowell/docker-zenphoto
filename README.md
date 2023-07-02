@@ -8,10 +8,22 @@ A dedicated docker image of the ZenPhoto CMS.
 - Existing MariaDB running
 
 # Docker Setup
+## CLI
+```
+$ docker volume create zp_cache --opt o=uid=33
+$ docker volume create zp_cache_html  --opt o=uid=33
+$ docker run -it ghcr.io/shaneapowell/docker-zenphoto \
+        -p 80:80 \
+        -v zp_cache:/var/www/html/cache \
+        -v zp_cache_html:/var/www/html/cache_html \
+        -v
+```
 - Create needed local volumes
   - `zp-data`
   - `cache`
   - `cache_html`
+
+## Docker Compose
 
 # Docker Update
 TBD

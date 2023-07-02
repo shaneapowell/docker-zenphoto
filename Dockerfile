@@ -1,4 +1,4 @@
-FROM php:7.4.0-apache
+FROM php:8.0.0-apache
 
 EXPOSE 80
 
@@ -14,7 +14,7 @@ RUN apt update -y && \
     libjpeg-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
-    libfreetype-dev \
+    libfreetype6-dev \
 	wget && \
 	apt install libmagickwand-dev --no-install-recommends -y && \
 	pecl install imagick && docker-php-ext-enable imagick  && \
@@ -23,7 +23,7 @@ RUN apt update -y && \
     rm -rf /var/www/html/* && \
     a2enmod rewrite && \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg=/usr/local/lib && \
-    docker-php-ext-install -j$(nproc) pdo_mysql gd  gettext tidy zip exif bz2 intl
+    docker-php-ext-install -j$(nproc) mysqli gd  gettext tidy zip exif bz2 intl
 
 WORKDIR /var/www/html
 
@@ -33,7 +33,7 @@ RUN wget -O /tmp/zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1
 
 COPY htaccess .htaccess
 RUN chown -R www-data ./ && \
-    chmod -R 0600 zp-data && \
+    chmod -R 0700 zp-data && \
     mkdir zp-data/charset_tést
 
 LABEL org.opencontainers.image.version="1.6.0"
