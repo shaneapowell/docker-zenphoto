@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   label:
     types: [created, edited]
   push:
@@ -24,7 +25,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: shaneapowell/docker-zenphoto
+          images: ghcr.io/shaneapowell/docker-zenphoto
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
