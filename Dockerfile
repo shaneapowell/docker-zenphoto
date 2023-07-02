@@ -1,5 +1,4 @@
 FROM php:8.1.0-apache
-MAINTAINER Bender77 <bryan@bwirth.com>
 
 EXPOSE 80
 
@@ -24,14 +23,13 @@ RUN apt update -y && \
     rm -rf /var/www/html/* && \
     a2enmod rewrite && \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg=/usr/local/lib && \
-    docker-php-ext-install -j$(nproc) pdo_mysql gd  gettext tidy zip exif bz2 intl  && \
+    docker-php-ext-install -j$(nproc) pdo_mysql gd  gettext tidy zip exif bz2 intl
 
 WORKDIR /var/www/html
-USER www-data
 
-RUN wget -O /zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1.6.tar.gz && \
-    /bin/tar xvf /zenphoto.tar.gz --strip-components=1 && \
-    rm /zenphoto.tar.gz
+RUN wget -O /tmp/zenphoto.tar.gz https://github.com/zenphoto/zenphoto/archive/v1.6.tar.gz && \
+    /bin/tar xvf /tmp/zenphoto.tar.gz --strip-components=1 && \
+    rm /tmp/zenphoto.tar.gz
 
 COPY htaccess .htaccess
 COPY zenphoto.cfg.php zp-data/zenphoto.cfg.php
