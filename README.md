@@ -46,6 +46,8 @@ services:
     restart: unless-stopped
     ports:
       - 80:80
+    environment:
+      # ZP_PATH: /photos
     volumes:
       - /home/zenphoto/zp-data:/var/www/data/zp-data
       - zenphoto-albums/var/www/data/albums
@@ -117,12 +119,9 @@ Query OK, 0 rows affected (0.076 sec)
 
 ```
 
-# Behind a Proxy
-ZenPhoto can be easily put behind a host routed proxy (like Caddy or Traefik) without any issue at all.  eg (photos.mydomain.com)
-
-If you try to however proxy ZenPhoto behind a sub-path, you will run into an issue. eg (www.mydomain.com/photos/).
-ZenPhoto tries to automaticaly determine it's base path for us.  In this case, the base path is `/`.  
-If you need to place zenphoto behind a subpath, you'll need to manually modify your `zp-data/zenphoto.cfg.php` file.  Find the line near the bottom and uncomment it with the appropriate path.
+# Served from a sub-path
+By default, this container serves up all your content from the root path `/`.  If you wish to allow access through a specific sub-path  eg:`/photos/`, you'll need to make 2 small modifications.
+You must manually edit your `zp-data/zenphoto.cfg.php` file.
 ```
 // define('WEBPATH', '/zenphoto');
 ```
@@ -130,6 +129,18 @@ to
 ```
 define('WEBPATH', '/photos');
 ```
+Next, you must add the environment variable `ZP_PATH` to your container runtime.  This variable will casue a `symlink` to be created internally to zenphoto, pointing at the relative path.  As a result, your container will respond to both the `/` path, and your sub-path `/photos` as well. 
+```
+environment:
+  ZP_PATH: /photos
+```
+
+
+# Behind a Proxy
+ZenPhoto can be easily put behind a host routed proxy (like Caddy or Traefik) without any issue at all.  eg (photos.mydomain.com)
+
+If you try to however proxy ZenPhoto behind a `sub-path`, you will run into an issue. eg (www.mydomain.com/photos/).
+You'll need to enable zenphoto to run from behind a sub-path as defined above (Servied from as sub-path).  And that sub-path must match your proxied sub-path.
 
 # Troubleshooting
 ## FAQ
