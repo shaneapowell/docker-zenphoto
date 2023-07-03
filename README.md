@@ -117,6 +117,20 @@ Query OK, 0 rows affected (0.076 sec)
 
 ```
 
+# Behind a Proxy
+ZenPhoto can be easily put behind a host routed proxy (like Caddy or Traefik) without any issue at all.  eg (photos.mydomain.com)
+
+If you try to however proxy ZenPhoto behind a sub-path, you will run into an issue. eg (www.mydomain.com/photos/).
+ZenPhoto tries to automaticaly determine it's base path for us.  In this case, the base path is `/`.  
+If you need to place zenphoto behind a subpath, you'll need to manually modify your `zp-data/zenphoto.cfg.php` file.  Find the line near the bottom and uncomment it with the appropriate path.
+```
+// define('WEBPATH', '/zenphoto');
+```
+to
+```
+define('WEBPATH', '/photos');
+```
+
 # Troubleshooting
 ## FAQ
 - What is the UID:GID of the user within the container?
