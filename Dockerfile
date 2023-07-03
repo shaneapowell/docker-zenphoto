@@ -33,6 +33,7 @@ RUN mkdir -p /var/www/data && \
     mv /var/www/html/albums /var/www/data && \
     mkdir -p /var/www/data/cache/cache && \
     mkdir -p /var/www/data/cache/cache_html && \
+    ln -s /var/www/data/albums /var/www/html/albums && \
     ln -s /var/www/data/zp-data /var/www/html/zp-data && \
     ln -s /var/www/data/cache/cache /var/www/html/cache && \
     ln -s /var/www/data/cache/cache_html /var/www/html/cache_html && \
